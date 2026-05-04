@@ -2,7 +2,9 @@ FROM node:20-alpine AS builder
 
 WORKDIR /app
 
-RUN apk add --no-cache openssl
+RUN echo "http://mirror.yandex.ru/mirrors/alpine/v3.23/main" > /etc/apk/repositories \
+    && echo "http://mirror.yandex.ru/mirrors/alpine/v3.23/community" >> /etc/apk/repositories \
+    && apk add --no-cache openssl
 
 COPY package*.json .npmrc ./
 RUN npm ci --no-audit --no-fund
@@ -18,7 +20,9 @@ FROM node:20-alpine AS production
 
 WORKDIR /app
 
-RUN apk add --no-cache openssl dumb-init
+RUN echo "http://mirror.yandex.ru/mirrors/alpine/v3.23/main" > /etc/apk/repositories \
+    && echo "http://mirror.yandex.ru/mirrors/alpine/v3.23/community" >> /etc/apk/repositories \
+    && apk add --no-cache openssl dumb-init
 
 COPY package*.json ./
 COPY --from=builder /app/node_modules ./node_modules
