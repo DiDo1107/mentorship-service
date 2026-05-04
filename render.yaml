@@ -8,7 +8,6 @@ services:
   - type: web
     name: mentorship-backend
     env: docker
-    plan: free
     dockerfilePath: ./backend/Dockerfile
     dockerContext: ./backend
     envVars:
@@ -30,7 +29,6 @@ services:
   - type: web
     name: mentorship-frontend
     env: static
-    plan: free
     buildCommand: npm install && npm run build
     staticPublishPath: dist
     rootDir: frontend
