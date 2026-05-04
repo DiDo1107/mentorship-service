@@ -1,0 +1,168 @@
+generator client {
+  provider      = "prisma-client-js"
+  binaryTargets = ["native", "debian-openssl-3.0.x"]
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum Role {
+  hr
+  mentor
+  employee
+}
+
+enum PairStatus {
+  active
+  completed
+  paused
+}
+
+enum TaskPriority {
+  high
+  medium
+  low
+}
+
+enum TaskStatus {
+  not_started
+  in_progress
+  completed
+}
+
+model User {
+  id        String   @id @default(cuid())
+  email     String   @unique
+  password  String
+  firstName String
+  lastName  String
+  role      Role
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  mentorPairs    MentorPair[]  @relation("MentorPairs")
+  employeePairs  MentorPair[]  @relation("EmployeePairs")
+  hrPairs        MentorPair[]  @relation("HRPairs")
+  refreshTokens  RefreshToken[]
+  feedbackGiven  Feedback[]    @relation("FeedbackGiver")
+  feedbackReceived Feedback[]  @relation("FeedbackReceiver")
+  createdMeetings Meeting[]    @relation("MeetingCreator")
+  comments       TaskComment[]
+  notifications  Notification[]
+
+  @@map("users")
+}
+
+model RefreshToken {
+  id        String   @id @default(cuid())
+  token     String   @unique
+  userId    String
+  expiresAt DateTime
+  createdAt DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("refresh_tokens")
+}
+
+model MentorPair {
+  id         String     @id @default(cuid())
+  mentorId   String
+  employeeId String
+  hrId       String
+  startDate  DateTime
+  endDate    DateTime
+  status     PairStatus @default(active)
+  createdAt  DateTime   @default(now())
+  updatedAt  DateTime   @updatedAt
+
+  mentor   User @relation("MentorPairs", fields: [mentorId], references: [id])
+  employee User @relation("EmployeePairs", fields: [employeeId], references: [id])
+  hr       User @relation("HRPairs", fields: [hrId], references: [id])
+
+  tasks    Task[]
+  meetings Meeting[]
+  feedback Feedback[]
+
+  @@map("mentor_pairs")
+}
+
+model Task {
+  id          String       @id @default(cuid())
+  pairId      String
+  title       String
+  description String?
+  deadline    DateTime
+  priority    TaskPriority @default(medium)
+  status      TaskStatus   @default(not_started)
+  fileName    String?
+  fileUrl     String?
+  createdAt   DateTime     @default(now())
+  updatedAt   DateTime     @updatedAt
+
+  pair     MentorPair    @relation(fields: [pairId], references: [id], onDelete: Cascade)
+  comments TaskComment[]
+
+  @@map("tasks")
+}
+
+model TaskComment {
+  id        String   @id @default(cuid())
+  taskId    String
+  authorId  String
+  text      String
+  createdAt DateTime @default(now())
+
+  task   Task @relation(fields: [taskId], references: [id], onDelete: Cascade)
+  author User @relation(fields: [authorId], references: [id])
+
+  @@map("task_comments")
+}
+
+model Notification {
+  id        String   @id @default(cuid())
+  userId    String
+  text      String
+  link      String?
+  read      Boolean  @default(false)
+  createdAt DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("notifications")
+}
+
+model Meeting {
+  id          String   @id @default(cuid())
+  pairId      String
+  creatorId   String
+  scheduledAt DateTime
+  notes       String?
+  summary     String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  pair    MentorPair @relation(fields: [pairId], references: [id], onDelete: Cascade)
+  creator User       @relation("MeetingCreator", fields: [creatorId], references: [id])
+
+  @@map("meetings")
+}
+
+model Feedback {
+  id         String   @id @default(cuid())
+  pairId     String
+  giverId    String
+  receiverId String
+  rating     Int
+  comment    String?
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  pair     MentorPair @relation(fields: [pairId], references: [id], onDelete: Cascade)
+  giver    User       @relation("FeedbackGiver", fields: [giverId], references: [id])
+  receiver User       @relation("FeedbackReceiver", fields: [receiverId], references: [id])
+
+  @@map("feedback")
+}

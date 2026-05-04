@@ -1,0 +1,26 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(npm install *)",
+      "Bash(npx tsc *)",
+      "Bash(docker-compose up *)",
+      "Bash(docker-compose down *)",
+      "Bash(docker exec *)",
+      "Bash(xargs ls *)",
+      "Bash(curl -s -X POST http://localhost:4000/api/auth/login -H \"Content-Type: application/json\" -d '{\"email\":\"hr@company.ru\",\"password\":\"password123\"}')",
+      "Bash(docker-compose build *)",
+      "Bash(docker info *)",
+      "Bash(docker context *)",
+      "Bash(npm --version)",
+      "Bash(DOCKER_BUILDKIT=0 COMPOSE_DOCKER_CLI_BUILD=0 docker-compose build backend)",
+      "Bash(docker run *)",
+      "Bash(docker rm *)",
+      "PowerShell(docker rm -f backend_build 2>$null)",
+      "PowerShell(docker run -d --name backend_build node:20-slim sleep infinity)",
+      "PowerShell(docker exec backend_build apt-get update -y 2>&1)",
+      "Bash(taskkill /F /IM \"Docker Desktop.exe\" /T)",
+      "Bash(taskkill /F /IM \"dockerd.exe\" /T)",
+      "Bash(taskkill /F /IM \"com.docker.backend.exe\" /T)"
+    ]
+  }
+}
