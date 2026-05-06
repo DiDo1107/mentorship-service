@@ -76,14 +76,6 @@ export default function LoginPage() {
             </Link>
           </p>
 
-          <div className="mt-6 p-4 bg-gray-50 rounded-lg">
-            <p className="text-xs text-gray-600 font-medium mb-2">Тестовые аккаунты:</p>
-            <div className="space-y-1 text-xs text-gray-500">
-              <p>HR: hr@company.ru / password123</p>
-              <p>Наставник: mentor1@company.ru / password123</p>
-              <p>Сотрудник: employee1@company.ru / password123</p>
-            </div>
-          </div>
         </div>
       </div>
     </div>
